@@ -3,494 +3,955 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ray Arch Academy — Where Architects Begin</title>
+<title>Ray Arch Academy — A Building Unfolds</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Syne:wght@400;600;700;800&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
-:root {
-  --ink:#080808;--ink2:#111111;--ink3:#1C1C1C;
-  --paper:#F2EDE4;--paper2:#E8E1D5;
-  --gold:#C8A96E;--gold2:#E2C98A;
-  --rust:#C45C2E;--teal:#2A6B6B;
-  --dim:rgba(242,237,228,.45);--faint:rgba(242,237,228,.07);
-  --line:rgba(200,169,110,.18);
+/* ═══════════════════════════════════════
+   TOKENS & RESET
+═══════════════════════════════════════ */
+:root{
+  --bg:#07080A;
+  --bg2:#0D0F12;
+  --paper:#EDE8DF;
+  --gold:#C4A35A;
+  --gold2:#E0C27A;
+  --dim:rgba(237,232,223,.4);
+  --faint:rgba(237,232,223,.07);
+  --line:rgba(196,163,90,.15);
+  --chapter-h: 100vh;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--ink);color:var(--paper);font-family:'Instrument Sans',sans-serif;overflow-x:hidden;cursor:none}
+html{font-size:16px}
+body{
+  background:var(--bg);
+  color:var(--paper);
+  font-family:'DM Mono',monospace;
+  overflow-x:hidden;
+  cursor:none;
+}
 a{color:inherit;text-decoration:none}
 
-/* CURSOR */
-#cur-dot{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .2s;mix-blend-mode:difference}
-#cur-ring{position:fixed;width:40px;height:40px;border:1.5px solid rgba(200,169,110,.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .4s,height .4s,border-color .3s}
+/* ═══════════════════════════════════════
+   CURSOR
+═══════════════════════════════════════ */
+#cur{
+  position:fixed;
+  width:6px;height:6px;
+  background:var(--gold);
+  border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  mix-blend-mode:screen;
+  transition:transform .15s;
+}
+#cur-r{
+  position:fixed;
+  width:32px;height:32px;
+  border:1px solid rgba(196,163,90,.4);
+  border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:width .4s,height .4s;
+}
 
-/* NOISE */
-body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");pointer-events:none;z-index:8000;opacity:.6}
+/* ═══════════════════════════════════════
+   SCROLL PROGRESS
+═══════════════════════════════════════ */
+#progress-bar{
+  position:fixed;top:0;left:0;
+  height:1px;width:0%;
+  background:linear-gradient(to right,var(--gold),var(--gold2));
+  z-index:2000;
+  transition:width .05s;
+}
 
-/* NAV */
-nav{position:fixed;top:0;width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 3rem;z-index:1000;transition:background .5s,padding .4s}
-nav.scrolled{background:rgba(8,8,8,.92);backdrop-filter:blur(20px);padding:1rem 3rem;border-bottom:1px solid var(--line)}
-.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;letter-spacing:.06em;text-transform:uppercase;color:var(--paper)}
-.nav-logo span{color:var(--gold)}
-.nav-links{display:flex;gap:2rem;list-style:none;align-items:center}
-.nav-links a{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);transition:color .3s}
-.nav-links a:hover{color:var(--gold)}
-.nav-apply{background:var(--gold);color:var(--ink);padding:.55rem 1.6rem;font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;transition:background .3s,transform .2s;display:inline-block}
-.nav-apply:hover{background:var(--gold2);transform:translateY(-1px)}
-.ham{display:none;flex-direction:column;gap:5px;cursor:none;padding:.5rem}
-.ham span{width:24px;height:1.5px;background:var(--paper)}
+/* ═══════════════════════════════════════
+   NAV
+═══════════════════════════════════════ */
+nav{
+  position:fixed;top:0;width:100%;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.5rem 3rem;z-index:1000;
+  mix-blend-mode:normal;
+}
+.nav-logo{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:.9rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--paper);
+}
+.nav-logo em{color:var(--gold);font-style:normal}
+.nav-chapter{
+  font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--dim);
+  transition:color .5s;
+}
+.nav-chapter.lit{color:var(--gold)}
+.nav-cta{
+  font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  border:1px solid var(--line);
+  padding:.5rem 1.2rem;color:var(--dim);
+  transition:all .3s;
+}
+.nav-cta:hover{border-color:var(--gold);color:var(--gold)}
 
-/* HERO */
-#hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden;padding-top:80px}
-.hero-left{display:flex;flex-direction:column;justify-content:center;padding:6rem 4rem 6rem 3rem;position:relative;z-index:2}
-.hero-tag{display:inline-flex;align-items:center;gap:.7rem;font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:2.5rem}
-.hero-tag::before{content:'';display:block;width:30px;height:1px;background:var(--gold)}
-.hero-h1{font-family:'Playfair Display',serif;font-size:clamp(3.2rem,5.5vw,5.5rem);font-weight:900;line-height:.95;letter-spacing:-.02em;margin-bottom:2.5rem}
-.hero-h1 .line{display:block;overflow:hidden}
-.hero-h1 .line span{display:block;transform:translateY(110%);animation:lineUp .9s cubic-bezier(.77,0,.18,1) forwards}
-.hero-h1 .line:nth-child(1) span{animation-delay:.1s}
-.hero-h1 .line:nth-child(2) span{animation-delay:.25s}
-.hero-h1 .line:nth-child(3) span{animation-delay:.4s}
-.hero-h1 em{font-style:italic;color:var(--gold)}
-.hero-desc{font-size:.9rem;color:var(--dim);line-height:1.85;max-width:400px;margin-bottom:3rem;font-weight:300;opacity:0;animation:fadeIn .8s .8s forwards}
-.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;opacity:0;animation:fadeIn .8s 1s forwards}
-.btn-main{background:var(--gold);color:var(--ink);padding:.85rem 2.2rem;font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;transition:all .3s;display:inline-block}
-.btn-main:hover{background:var(--gold2);transform:translateY(-2px)}
-.btn-outline{border:1px solid rgba(242,237,228,.2);color:var(--paper);padding:.85rem 2.2rem;font-family:'Syne',sans-serif;font-weight:600;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;transition:all .3s;display:inline-block}
-.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
-.hero-right{position:relative;overflow:hidden;background:var(--ink2);display:flex;align-items:center;justify-content:center}
-.geo-svg{width:88%;max-width:500px;opacity:0;animation:fadeIn 1.2s .5s forwards}
-.hero-scroll-cue{position:absolute;bottom:2.5rem;left:3rem;display:flex;align-items:center;gap:.8rem;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);opacity:0;animation:fadeIn 1s 1.4s forwards}
-.scroll-bar{width:40px;height:1px;background:var(--gold);position:relative;overflow:hidden}
-.scroll-bar::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--paper);animation:scrollSlide 2s 1.8s ease-in-out infinite}
+/* ═══════════════════════════════════════
+   SCROLL CONTAINER
+═══════════════════════════════════════ */
+/* The page is very tall — each chapter is 100vh of scroll */
+#scroll-driver{
+  height:700vh; /* 7 chapters × 100vh */
+  position:relative;
+}
 
-/* TICKER */
-.ticker{background:var(--gold);padding:.9rem 0;overflow:hidden;display:flex}
-.ticker-track{display:flex;gap:0;white-space:nowrap;animation:tick 28s linear infinite}
-.ticker-item{font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);padding:0 2.5rem;border-right:1px solid rgba(8,8,8,.2);flex-shrink:0}
+/* Sticky viewport — everything animates inside here */
+#sticky-view{
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-/* COUNTERS */
-.counters{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}
-.ctr{padding:3.5rem 2.5rem;border-right:1px solid var(--line);position:relative;overflow:hidden;transition:background .4s}
-.ctr:last-child{border-right:none}
-.ctr:hover{background:var(--ink2)}
-.ctr-num{font-family:'Playfair Display',serif;font-size:3.6rem;font-weight:900;color:var(--gold);line-height:1;margin-bottom:.5rem}
-.ctr-num sup{font-size:1.5rem;vertical-align:top;margin-top:.5rem}
-.ctr-label{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);line-height:1.5}
-.ctr-bar{position:absolute;bottom:0;left:0;height:2px;width:0%;background:var(--gold);transition:width 1.5s cubic-bezier(.77,0,.18,1)}
-.ctr.counted .ctr-bar{width:100%}
+/* ═══════════════════════════════════════
+   BACKGROUND ATMOSPHERE
+═══════════════════════════════════════ */
+#atmo{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 60% at 50% 50%,
+    rgba(196,163,90,.06) 0%,transparent 70%);
+  transition:opacity 1s;
+}
+.noise-layer{
+  position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  pointer-events:none;opacity:.7;
+}
 
-/* SECTION COMMONS */
-.s-eyebrow{font-size:.62rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:.9rem;display:flex;align-items:center;gap:.7rem}
-.s-eyebrow::before{content:'';display:block;width:28px;height:1px;background:var(--gold)}
-.s-title{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,4vw,3.8rem);font-weight:900;line-height:1.05;letter-spacing:-.01em}
+/* ═══════════════════════════════════════
+   CHAPTER COPY PANELS
+═══════════════════════════════════════ */
+#chapter-copy{
+  position:absolute;
+  bottom:3rem;left:3rem;
+  z-index:10;
+  max-width:420px;
+  pointer-events:none;
+}
+.copy-label{
+  font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:.6rem;
+  opacity:0;transform:translateY(12px);
+  transition:opacity .6s,transform .6s;
+}
+.copy-title{
+  font-family:'Cormorant',serif;
+  font-size:clamp(2rem,4vw,3.2rem);
+  font-weight:300;line-height:1.1;
+  letter-spacing:-.01em;
+  opacity:0;transform:translateY(16px);
+  transition:opacity .7s .1s,transform .7s .1s;
+}
+.copy-title em{font-style:italic;color:var(--gold)}
+.copy-body{
+  margin-top:1rem;
+  font-size:.75rem;line-height:1.9;letter-spacing:.03em;
+  color:var(--dim);font-family:'DM Mono',monospace;font-weight:300;
+  opacity:0;transform:translateY(12px);
+  transition:opacity .6s .2s,transform .6s .2s;
+}
+#chapter-copy.active .copy-label,
+#chapter-copy.active .copy-title,
+#chapter-copy.active .copy-body{
+  opacity:1;transform:none;
+}
+
+/* chapter number top-right */
+#chapter-num{
+  position:absolute;top:50%;right:3rem;
+  transform:translateY(-50%);
+  font-family:'Cormorant',serif;
+  font-size:12rem;font-weight:300;
+  color:rgba(196,163,90,.04);
+  line-height:1;
+  letter-spacing:-.05em;
+  z-index:1;
+  transition:opacity .5s;
+  pointer-events:none;
+  user-select:none;
+}
+
+/* scroll hint */
+#scroll-hint{
+  position:absolute;bottom:2rem;right:3rem;
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  font-size:.55rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);
+  z-index:10;
+  animation:fadeHint 3s 1s ease-in-out infinite;
+}
+#scroll-hint .sh-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--gold),transparent)}
+@keyframes fadeHint{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ═══════════════════════════════════════
+   BUILDING SVG STAGE
+═══════════════════════════════════════ */
+#building-stage{
+  position:absolute;
+  inset:0;
+  display:flex;align-items:center;justify-content:center;
+  z-index:5;
+}
+#building-svg{
+  width:min(55vw,580px);
+  height:auto;
+  transform-origin:center center;
+  will-change:transform,opacity;
+}
+
+/* Grid / blueprint lines */
+.grid-line{
+  stroke:rgba(196,163,90,.07);
+  stroke-width:.5;
+  transition:opacity 1s;
+}
+/* structure elements — initially hidden, revealed by class */
+.bld-ground{ fill:none;stroke:rgba(196,163,90,.6);stroke-width:1.2 }
+.bld-shell{  fill:none;stroke:rgba(196,163,90,.85);stroke-width:1.5 }
+.bld-detail{ fill:none;stroke:rgba(196,163,90,.5);stroke-width:.8;stroke-dasharray:4 3 }
+.bld-glass{  fill:rgba(196,163,90,.04);stroke:rgba(196,163,90,.3);stroke-width:.6 }
+.bld-cut{    fill:rgba(196,163,90,.08);stroke:var(--gold);stroke-width:1.2 }
+.bld-light{  fill:none;stroke:rgba(237,232,223,.12);stroke-width:.5 }
+.bld-dim{    fill:none;stroke:rgba(196,163,90,.35);stroke-width:.5;stroke-dasharray:2 4 }
+.bld-shadow{ fill:rgba(0,0,0,.25) }
+.bld-highlight{ fill:rgba(196,163,90,.15) }
+.bld-accent{ stroke:var(--gold2);stroke-width:2;fill:none }
+
+/* animated reveal */
+.reveal-stroke{
+  stroke-dasharray:1000;
+  stroke-dashoffset:1000;
+  transition:stroke-dashoffset 2s cubic-bezier(.77,0,.18,1);
+}
+.reveal-stroke.drawn{ stroke-dashoffset:0 }
+
+/* section cut clip */
+#cut-mask rect{ transition:height 1.5s cubic-bezier(.77,0,.18,1) }
+
+/* glow dot */
+.glow-dot{
+  fill:var(--gold);
+  filter:drop-shadow(0 0 6px rgba(196,163,90,.8));
+  opacity:0;transition:opacity .5s;
+}
+.glow-dot.on{ opacity:1 }
+
+/* annotation lines */
+.annot{
+  opacity:0;transition:opacity .8s;
+}
+.annot.on{ opacity:1 }
+
+/* ═══════════════════════════════════════
+   LIGHT RAY
+═══════════════════════════════════════ */
+#light-ray{
+  position:absolute;
+  top:0;right:20%;
+  width:1px;height:0%;
+  background:linear-gradient(to bottom,rgba(196,163,90,.25),transparent);
+  transform-origin:top center;
+  transition:height 1.5s ease,opacity .8s;
+  opacity:0;
+  z-index:3;
+}
+
+/* ═══════════════════════════════════════
+   SECTION INDICATOR (right edge)
+═══════════════════════════════════════ */
+#chapter-dots{
+  position:fixed;right:1.5rem;top:50%;
+  transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:.7rem;
+  z-index:1000;
+}
+.cdot{
+  width:4px;height:4px;border-radius:50%;
+  background:rgba(196,163,90,.25);
+  transition:background .4s,transform .4s;
+}
+.cdot.active{background:var(--gold);transform:scale(1.8)}
+
+/* ═══════════════════════════════════════
+   AFTER-SCROLL SECTIONS (normal page)
+═══════════════════════════════════════ */
+#main-content{
+  background:var(--bg);
+  position:relative;
+  z-index:10;
+}
+
+/* courses strip */
+.courses-strip{
+  padding:6rem 3rem;
+  border-top:1px solid var(--line);
+}
+.courses-strip-head{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:4rem;flex-wrap:wrap;gap:2rem;
+}
+.s-eyebrow{
+  font-size:.58rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem;
+}
+.s-eyebrow::before{content:'';display:block;width:24px;height:1px;background:var(--gold)}
+.s-title{
+  font-family:'Cormorant',serif;
+  font-size:clamp(2rem,4vw,3.5rem);
+  font-weight:300;line-height:1.05;
+}
 .s-title em{font-style:italic;color:var(--gold)}
 
-/* REVEAL */
-.rv{opacity:0;transform:translateY(48px);transition:opacity .85s cubic-bezier(.25,.46,.45,.94),transform .85s cubic-bezier(.25,.46,.45,.94)}
-.rv.on{opacity:1;transform:none}
-.rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.2s}.rv.d3{transition-delay:.3s}.rv.d4{transition-delay:.4s}.rv.d5{transition-delay:.5s}
-
-/* COURSES */
-#courses{padding:7rem 3rem}
-.courses-top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:5rem;flex-wrap:wrap;gap:2rem}
-.courses-top-right{max-width:320px;font-size:.85rem;color:var(--dim);line-height:1.8;font-weight:300;padding-left:2rem;border-left:1px solid var(--line)}
-.clist{list-style:none}
-.clist-item{display:grid;grid-template-columns:80px 1fr auto;align-items:center;gap:2rem;padding:2rem 1.5rem;border-bottom:1px solid var(--line);position:relative;transition:background .35s;overflow:hidden;cursor:none}
-.clist-item::before{content:'';position:absolute;inset:0;background:var(--ink2);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.77,0,.18,1)}
+.clist{ list-style:none }
+.clist-item{
+  display:grid;grid-template-columns:60px 1fr auto;
+  align-items:center;gap:2rem;
+  padding:1.8rem 1rem;
+  border-bottom:1px solid var(--line);
+  position:relative;overflow:hidden;cursor:none;
+  transition:background .3s;
+}
+.clist-item::before{
+  content:'';position:absolute;inset:0;
+  background:rgba(196,163,90,.04);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .4s cubic-bezier(.77,0,.18,1);
+}
 .clist-item:hover::before{transform:scaleX(1)}
-.clist-item:hover .clist-arrow{transform:translate(4px,-4px);color:var(--gold)}
+.clist-item:hover .clist-arrow{transform:translate(3px,-3px);color:var(--gold)}
 .clist-item > *{position:relative;z-index:1}
-.clist-num{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:rgba(200,169,110,.15);line-height:1;transition:color .3s}
-.clist-item:hover .clist-num{color:rgba(200,169,110,.4)}
-.clist-name{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,2.5vw,2rem);font-weight:700;margin-bottom:.4rem}
-.clist-sub{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem}
-.clist-pills{display:flex;flex-wrap:wrap;gap:.4rem}
-.cpill{font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid rgba(242,237,228,.1);color:var(--dim);padding:.2rem .7rem;transition:border-color .3s,color .3s}
-.clist-item:hover .cpill{border-color:rgba(200,169,110,.25);color:var(--paper)}
-.clist-arrow{font-size:1.5rem;color:rgba(242,237,228,.3);transition:transform .3s,color .3s}
-.clist-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1px;background:var(--line)}
-.clist-grid .clist{background:var(--ink)}
+.cn{
+  font-family:'Cormorant',serif;font-size:2.5rem;font-weight:300;
+  color:rgba(196,163,90,.12);line-height:1;transition:color .3s;
+}
+.clist-item:hover .cn{color:rgba(196,163,90,.35)}
+.cname{
+  font-family:'Cormorant',serif;font-size:1.6rem;font-weight:400;
+  margin-bottom:.3rem;line-height:1;
+}
+.csub{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+.cpills{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem}
+.cpill{font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid rgba(237,232,223,.08);color:var(--dim);padding:.18rem .6rem}
+.clist-item:hover .cpill{border-color:rgba(196,163,90,.2);color:var(--paper)}
+.clist-arrow{font-size:1.2rem;color:rgba(237,232,223,.2);transition:all .3s}
 
-/* WHY */
-#why{display:grid;grid-template-columns:1fr 1fr;min-height:90vh}
-.why-visual{background:var(--ink2);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.why-geo-bg{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(200,169,110,.06) 59px,rgba(200,169,110,.06) 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(200,169,110,.06) 59px,rgba(200,169,110,.06) 60px)}
-.why-accent-card{position:relative;z-index:2;background:var(--ink3);border:1px solid var(--line);padding:3rem;max-width:360px;width:80%}
-.why-big-num{font-family:'Playfair Display',serif;font-size:6rem;font-weight:900;color:var(--gold);line-height:1;margin-bottom:.5rem}
-.why-big-label{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:2rem}
-.why-mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;padding-top:2rem;border-top:1px solid var(--line)}
-.wms-n{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;color:var(--paper)}
-.wms-l{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
-.why-right{padding:6rem 4rem;display:flex;flex-direction:column;justify-content:center}
-.features{margin-top:3rem;display:flex;flex-direction:column}
-.feat{display:flex;gap:1.5rem;align-items:flex-start;padding:1.8rem 0;border-bottom:1px solid var(--line);transition:padding-left .3s;cursor:none}
-.feat:hover{padding-left:.8rem}
-.feat-icon{width:40px;height:40px;flex-shrink:0;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;transition:border-color .3s,background .3s}
-.feat:hover .feat-icon{border-color:var(--gold);background:rgba(200,169,110,.07)}
-.feat-icon svg{width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:1.5}
-.feat-body h4{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:.35rem}
-.feat-body p{font-size:.8rem;color:var(--dim);line-height:1.75;font-weight:300}
+/* two col courses */
+.c2grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1px;background:var(--line)}
+.c2grid .clist{background:var(--bg)}
 
-/* RESULTS */
-#results{padding:7rem 3rem}
-.results-head{margin-bottom:4rem}
-.toppers-strip{display:flex;gap:1px;background:var(--line);overflow-x:auto;scrollbar-width:none}
-.toppers-strip::-webkit-scrollbar{display:none}
-.topper{flex:0 0 220px;background:var(--ink2);padding:2.5rem 1.8rem;position:relative;overflow:hidden;transition:background .4s,flex-basis .5s;cursor:none}
-.topper:hover{flex-basis:280px;background:var(--ink3)}
-.topper-year{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem}
-.topper-init{width:56px;height:56px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);margin-bottom:1.2rem;transition:border-color .3s}
-.topper:hover .topper-init{border-color:var(--gold)}
-.topper-name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;margin-bottom:.3rem}
-.topper-score{font-size:.7rem;color:var(--gold);margin-bottom:.5rem;letter-spacing:.08em}
-.topper-college{font-size:.72rem;color:var(--dim);line-height:1.5}
-.topper-line{position:absolute;bottom:0;left:0;height:2px;width:0%;background:var(--gold);transition:width .6s cubic-bezier(.77,0,.18,1)}
-.topper:hover .topper-line{width:100%}
+/* contact cta band */
+.cta-band{
+  background:var(--gold);
+  padding:5rem 3rem;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:2rem;
+}
+.cta-band h2{
+  font-family:'Cormorant',serif;
+  font-size:clamp(2rem,4vw,3.2rem);
+  font-weight:300;color:var(--bg);
+  line-height:1.1;
+}
+.cta-band h2 em{font-style:italic}
+.cta-btn{
+  background:var(--bg);color:var(--gold);
+  padding:1rem 2.5rem;
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;
+  transition:all .3s;display:inline-block;
+}
+.cta-btn:hover{background:var(--bg2);transform:translateY(-2px)}
 
-/* GALLERY */
-#gallery{padding:7rem 3rem 0}
-.gallery-head{margin-bottom:4rem}
-.gallery-grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:300px 300px;gap:1.5px;background:var(--line)}
-.gal{overflow:hidden;position:relative;cursor:none;background:var(--ink2)}
-.gal:first-child{grid-row:1/3}
-.gal-fill{width:100%;height:100%;transition:transform .6s cubic-bezier(.25,.46,.45,.94)}
-.gal:hover .gal-fill{transform:scale(1.06)}
-.gal-label{position:absolute;bottom:0;left:0;right:0;padding:1.5rem;background:linear-gradient(to top,rgba(8,8,8,.85),transparent);transform:translateY(10px);opacity:0;transition:all .4s}
-.gal:hover .gal-label{opacity:1;transform:none}
-.gal-label h4{font-family:'Playfair Display',serif;font-size:1rem;margin-bottom:.2rem}
-.gal-label p{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
-.gp-a{background:var(--ink2);background-image:radial-gradient(circle at 30% 40%,rgba(200,169,110,.1) 0%,transparent 50%),repeating-linear-gradient(135deg,transparent,transparent 20px,rgba(200,169,110,.04) 20px,rgba(200,169,110,.04) 21px)}
-.gp-b{background:var(--ink3);background-image:repeating-conic-gradient(rgba(200,169,110,.05) 0 10deg,transparent 10deg 90deg) 0 0/80px 80px}
-.gp-c{background:#0e1010;background-image:radial-gradient(circle at 70% 60%,rgba(42,107,107,.25) 0%,transparent 60%)}
-.gp-d{background:var(--ink2);background-image:repeating-linear-gradient(0deg,rgba(200,169,110,.04) 0 1px,transparent 1px 40px),repeating-linear-gradient(90deg,rgba(200,169,110,.04) 0 1px,transparent 1px 40px)}
-.gp-e{background:#100a08;background-image:radial-gradient(circle at 50% 50%,rgba(196,92,46,.15) 0%,transparent 65%)}
+/* footer */
+footer{
+  background:var(--bg2);
+  border-top:1px solid var(--line);
+  padding:3rem;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:1rem;
+}
+.f-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;letter-spacing:.1em;text-transform:uppercase}
+.f-logo em{color:var(--gold);font-style:normal}
+.f-copy{font-size:.6rem;letter-spacing:.1em;color:var(--dim)}
+.f-links{display:flex;gap:2rem;list-style:none}
+.f-links a{font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);transition:color .3s}
+.f-links a:hover{color:var(--gold)}
 
-/* TESTIMONIALS */
-#testimonials{padding:7rem 3rem}
-.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;background:var(--line);margin-top:4rem}
-.tcard{background:var(--ink2);padding:3rem 2.5rem;position:relative;overflow:hidden;transition:background .4s;cursor:none}
-.tcard:hover{background:var(--ink3)}
-.tcard::after{content:'"';position:absolute;top:1.5rem;right:2rem;font-family:'Playfair Display',serif;font-size:7rem;font-weight:900;color:rgba(200,169,110,.07);line-height:1;pointer-events:none}
-.tcard-exam{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem}
-.tcard-text{font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;font-weight:400;line-height:1.75;color:var(--paper);margin-bottom:2.5rem}
-.tcard-author{display:flex;align-items:center;gap:1rem}
-.tcard-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--ink3),var(--ink));border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold)}
-.tcard-n{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;margin-bottom:.15rem}
-.tcard-d{font-size:.65rem;color:var(--gold);letter-spacing:.08em}
+/* reveal utility */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .8s,transform .8s}
+.rv.on{opacity:1;transform:none}
+.rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.2s}.rv.d3{transition-delay:.3s}
 
-/* CONTACT */
-#contact{display:grid;grid-template-columns:1fr 1fr;min-height:90vh}
-.contact-left{background:var(--ink2);padding:7rem 4rem;position:relative;overflow:hidden}
-.contact-left-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 0% 100%,rgba(200,169,110,.07),transparent 70%)}
-.contact-left > *{position:relative;z-index:1}
-.contact-details{margin-top:4rem;display:flex;flex-direction:column;gap:2rem}
-.cdet{display:flex;gap:1.2rem;align-items:flex-start;padding-bottom:2rem;border-bottom:1px solid var(--line)}
-.cdet-icon{width:38px;height:38px;flex-shrink:0;border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
-.cdet-icon svg{width:15px;height:15px;stroke:var(--gold);fill:none;stroke-width:1.5}
-.cdet-label{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.3rem}
-.cdet-val{font-size:.88rem;font-weight:300;line-height:1.5}
-.batches{margin-top:3rem}
-.batches h4{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:1.2rem}
-.batch-pills{display:flex;flex-wrap:wrap;gap:.5rem}
-.bpill{font-family:'Syne',sans-serif;font-weight:700;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.25);color:var(--gold);padding:.4rem 1rem}
-.contact-right{background:var(--ink);padding:7rem 4rem;display:flex;flex-direction:column;justify-content:center}
-.form-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:2.5rem}
-.form-title em{font-style:italic;color:var(--gold)}
-.fg{margin-bottom:1.1rem}
-.fg label{display:block;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:.45rem}
-.fg input,.fg select,.fg textarea{width:100%;background:var(--ink2);border:1px solid rgba(242,237,228,.09);color:var(--paper);padding:.82rem 1.1rem;font-family:'Instrument Sans',sans-serif;font-size:.85rem;font-weight:300;outline:none;transition:border-color .3s;-webkit-appearance:none;border-radius:0;cursor:none}
-.fg select option{background:var(--ink2)}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold)}
-.fg textarea{height:90px;resize:none}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.form-btn{width:100%;margin-top:.5rem;background:var(--gold);color:var(--ink);padding:1rem;font-family:'Syne',sans-serif;font-weight:800;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;border:none;cursor:none;transition:background .3s,letter-spacing .3s}
-.form-btn:hover{background:var(--gold2);letter-spacing:.28em}
-.form-note{font-size:.68rem;color:var(--dim);margin-top:.8rem;font-weight:300}
-
-/* FOOTER */
-footer{background:var(--ink2);border-top:1px solid var(--line);padding:4rem 3rem 2rem}
-.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
-.f-brand-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;letter-spacing:.06em;text-transform:uppercase;color:var(--paper);margin-bottom:1rem;display:block}
-.f-brand-logo span{color:var(--gold)}
-.f-brand-desc{font-size:.8rem;color:var(--dim);line-height:1.8;font-weight:300;max-width:260px}
-.f-col h5{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem}
-.f-col ul{list-style:none;display:flex;flex-direction:column;gap:.6rem}
-.f-col a{font-size:.8rem;color:var(--dim);font-weight:300;transition:color .3s}
-.f-col a:hover{color:var(--gold)}
-.footer-bottom{padding-top:2rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
-.footer-bottom p{font-size:.68rem;color:rgba(242,237,228,.25);font-weight:300}
-.f-tagline{font-family:'Playfair Display',serif;font-size:.75rem;font-style:italic;color:rgba(200,169,110,.4);letter-spacing:.05em}
-
-/* FLOAT */
-.float-btn{position:fixed;bottom:1.8rem;right:1.8rem;z-index:500;background:var(--gold);color:var(--ink);padding:.75rem 1.5rem;font-family:'Syne',sans-serif;font-weight:800;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;box-shadow:0 8px 32px rgba(200,169,110,.35);transition:all .3s;opacity:0;transform:translateY(20px);animation:fadeIn .7s 1.8s forwards;display:inline-block}
-.float-btn:hover{background:var(--gold2);transform:translateY(-3px);box-shadow:0 14px 40px rgba(200,169,110,.45)}
-
-/* ANIMATIONS */
-@keyframes lineUp{to{transform:translateY(0)}}
-@keyframes fadeIn{to{opacity:1;transform:none}}
-@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@keyframes scrollSlide{0%{left:-100%}60%{left:100%}100%{left:100%}}
-
-/* RESPONSIVE */
-@media(max-width:900px){
-  nav{padding:1.2rem 1.5rem}.nav-links{display:none}.ham{display:flex}
-  #hero{grid-template-columns:1fr;min-height:auto}.hero-left{padding:6rem 1.5rem 4rem}.hero-right{height:60vw}
-  .counters{grid-template-columns:repeat(2,1fr)}
-  #courses,.why-right,#results,#gallery,#testimonials{padding:5rem 1.5rem}
-  #why{grid-template-columns:1fr}.why-visual{height:320px}
-  .clist-grid{grid-template-columns:1fr}
-  .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto}.gal:first-child{grid-row:auto}
-  .testi-grid{grid-template-columns:1fr}
-  #contact{grid-template-columns:1fr}.contact-left,.contact-right{padding:4rem 1.5rem}
-  footer{padding:3rem 1.5rem}.footer-top{grid-template-columns:1fr 1fr;gap:2rem}
-  .float-btn{bottom:1rem;right:1rem}
+/* mobile */
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem}
+  #chapter-copy{left:1.5rem;bottom:2rem;max-width:calc(100vw - 3rem)}
+  .copy-title{font-size:1.8rem}
+  #chapter-num{font-size:6rem;right:1rem}
+  #building-svg{width:90vw}
+  .courses-strip{padding:4rem 1.5rem}
+  .c2grid{grid-template-columns:1fr}
+  .cta-band{padding:3rem 1.5rem;flex-direction:column;align-items:flex-start}
+  footer{flex-direction:column;padding:2rem 1.5rem}
+  .f-links{flex-wrap:wrap;gap:1rem}
 }
 </style>
 </head>
 <body>
-<div id="cur-dot"></div>
-<div id="cur-ring"></div>
-<a href="#contact" class="float-btn">Apply Now ↗</a>
+
+<!-- Cursor -->
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- Progress -->
+<div id="progress-bar"></div>
 
 <!-- NAV -->
-<nav id="mainNav">
-  <a href="#" class="nav-logo">Ray <span>Arch</span> Academy</a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#courses">Courses</a></li>
-    <li><a href="#why">About</a></li>
-    <li><a href="#results">Results</a></li>
-    <li><a href="#gallery">Studio</a></li>
-    <li><a href="#testimonials">Alumni</a></li>
-    <li><a href="#contact" class="nav-apply">Apply Now</a></li>
-  </ul>
-  <div class="ham" id="ham" onclick="toggleMenu()"><span></span><span></span></div>
+<nav>
+  <span class="nav-logo">Ray <em>Arch</em> Academy</span>
+  <span class="nav-chapter" id="navChapter">Chapter I — Foundation</span>
+  <a href="#main-content" class="nav-cta">Enter Academy</a>
 </nav>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-left">
-    <p class="hero-tag">India's Architecture & Design Academy</p>
-    <h1 class="hero-h1">
-      <span class="line"><span>Where</span></span>
-      <span class="line"><span>Architects</span></span>
-      <span class="line"><span><em>Begin.</em></span></span>
-    </h1>
-    <p class="hero-desc">NATA · IIT JEE B.Arch · BDes · NIFT · NID — trained by practicing architects who've cracked the same exams, walked the same studios, and built the same dreams.</p>
-    <div class="hero-actions">
-      <a href="#courses" class="btn-main">Explore Programs</a>
-      <a href="#results" class="btn-outline">See Our Results</a>
+<!-- Chapter dots -->
+<div id="chapter-dots">
+  <div class="cdot active" data-i="0"></div>
+  <div class="cdot" data-i="1"></div>
+  <div class="cdot" data-i="2"></div>
+  <div class="cdot" data-i="3"></div>
+  <div class="cdot" data-i="4"></div>
+  <div class="cdot" data-i="5"></div>
+  <div class="cdot" data-i="6"></div>
+</div>
+
+<!-- ══════════ SCROLL NARRATIVE ══════════ -->
+<div id="scroll-driver">
+  <div id="sticky-view">
+
+    <!-- Atmosphere -->
+    <div id="atmo"></div>
+    <div class="noise-layer"></div>
+
+    <!-- Light ray -->
+    <div id="light-ray"></div>
+
+    <!-- Big ghost chapter number -->
+    <div id="chapter-num">I</div>
+
+    <!-- Building SVG stage -->
+    <div id="building-stage">
+      <svg id="building-svg" viewBox="0 0 560 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Clip for section cut reveal -->
+          <clipPath id="cut-clip">
+            <rect id="cut-rect" x="0" y="310" width="560" height="310"/>
+          </clipPath>
+          <!-- Gradient for shadow -->
+          <linearGradient id="shadowG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(0,0,0,0)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0.4)"/>
+          </linearGradient>
+          <!-- Glow filter -->
+          <filter id="glow">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- ── BLUEPRINT GRID ── -->
+        <g id="grid-group" opacity="0">
+          <!-- verticals -->
+          <line class="grid-line" x1="80" y1="0" x2="80" y2="620"/>
+          <line class="grid-line" x1="160" y1="0" x2="160" y2="620"/>
+          <line class="grid-line" x1="240" y1="0" x2="240" y2="620"/>
+          <line class="grid-line" x1="320" y1="0" x2="320" y2="620"/>
+          <line class="grid-line" x1="400" y1="0" x2="400" y2="620"/>
+          <line class="grid-line" x1="480" y1="0" x2="480" y2="620"/>
+          <!-- horizontals -->
+          <line class="grid-line" x1="0" y1="100" x2="560" y2="100"/>
+          <line class="grid-line" x1="0" y1="200" x2="560" y2="200"/>
+          <line class="grid-line" x1="0" y1="310" x2="560" y2="310"/>
+          <line class="grid-line" x1="0" y1="420" x2="560" y2="420"/>
+          <line class="grid-line" x1="0" y1="520" x2="560" y2="520"/>
+        </g>
+
+        <!-- ── GROUND SHADOW ── -->
+        <ellipse id="ground-shadow" cx="280" cy="595" rx="180" ry="14"
+          fill="rgba(0,0,0,0)" class="bld-shadow"/>
+
+        <!-- ── GROUND PLANE ── -->
+        <g id="ground-group" opacity="0">
+          <line class="bld-ground reveal-stroke" x1="40" y1="580" x2="520" y2="580"/>
+          <line class="bld-dim" x1="40" y1="580" x2="0" y2="620"/>
+          <line class="bld-dim" x1="520" y1="580" x2="560" y2="620"/>
+          <line class="bld-dim" x1="40" y1="580" x2="520" y2="580"/>
+        </g>
+
+        <!-- ── BUILDING MAIN SHELL ── -->
+        <g id="shell-group" opacity="0">
+          <!-- Main facade -->
+          <rect class="bld-shell reveal-stroke" x="120" y="140" width="320" height="440"/>
+          <!-- Roof plane -->
+          <rect class="bld-shell reveal-stroke" x="110" y="128" width="340" height="22" rx="1"/>
+          <!-- Left wing -->
+          <rect class="bld-shell reveal-stroke" x="60" y="220" width="60" height="360"/>
+          <!-- Right wing -->
+          <rect class="bld-shell reveal-stroke" x="440" y="220" width="60" height="360"/>
+          <!-- Canopy -->
+          <rect class="bld-accent reveal-stroke" x="180" y="498" width="200" height="12"/>
+        </g>
+
+        <!-- ── FLOOR LINES (structure) ── -->
+        <g id="floors-group" opacity="0">
+          <line class="bld-detail" x1="120" y1="220" x2="440" y2="220"/>
+          <line class="bld-detail" x1="120" y1="300" x2="440" y2="300"/>
+          <line class="bld-detail" x1="120" y1="380" x2="440" y2="380"/>
+          <line class="bld-detail" x1="120" y1="460" x2="440" y2="460"/>
+          <!-- Wing floors -->
+          <line class="bld-detail" x1="60" y1="300" x2="120" y2="300"/>
+          <line class="bld-detail" x1="60" y1="380" x2="120" y2="380"/>
+          <line class="bld-detail" x1="60" y1="460" x2="120" y2="460"/>
+          <line class="bld-detail" x1="440" y1="300" x2="500" y2="300"/>
+          <line class="bld-detail" x1="440" y1="380" x2="500" y2="380"/>
+          <line class="bld-detail" x1="440" y1="460" x2="500" y2="460"/>
+        </g>
+
+        <!-- ── GLAZING / WINDOWS ── -->
+        <g id="glass-group" opacity="0">
+          <!-- Ground floor entry -->
+          <rect class="bld-glass" x="210" y="500" width="60" height="80"/>
+          <rect class="bld-glass" x="290" y="500" width="60" height="80"/>
+          <!-- Floor 1 windows -->
+          <rect class="bld-glass" x="140" y="230" width="50" height="60"/>
+          <rect class="bld-glass" x="210" y="230" width="50" height="60"/>
+          <rect class="bld-glass" x="300" y="230" width="50" height="60"/>
+          <rect class="bld-glass" x="370" y="230" width="50" height="60"/>
+          <!-- Floor 2 windows -->
+          <rect class="bld-glass" x="140" y="312" width="50" height="58"/>
+          <rect class="bld-glass" x="210" y="312" width="50" height="58"/>
+          <rect class="bld-glass" x="300" y="312" width="50" height="58"/>
+          <rect class="bld-glass" x="370" y="312" width="50" height="58"/>
+          <!-- Floor 3 windows -->
+          <rect class="bld-glass" x="140" y="392" width="50" height="58"/>
+          <rect class="bld-glass" x="210" y="392" width="50" height="58"/>
+          <rect class="bld-glass" x="300" y="392" width="50" height="58"/>
+          <rect class="bld-glass" x="370" y="392" width="50" height="58"/>
+          <!-- Top floor ribbon window -->
+          <rect class="bld-glass" x="130" y="152" width="300" height="65"/>
+        </g>
+
+        <!-- ── SECTION CUT REVEAL (chapter 4) ── -->
+        <g id="section-group" opacity="0" clip-path="url(#cut-clip)">
+          <!-- Interior floor plates -->
+          <rect class="bld-cut" x="121" y="219" width="318" height="3"/>
+          <rect class="bld-cut" x="121" y="299" width="318" height="3"/>
+          <rect class="bld-cut" x="121" y="379" width="318" height="3"/>
+          <rect class="bld-cut" x="121" y="459" width="318" height="3"/>
+          <!-- Core/stairwell -->
+          <rect class="bld-cut" x="242" y="222" width="76" height="237"/>
+          <!-- Ceiling heights -->
+          <line class="bld-dim" x1="130" y1="222" x2="130" y2="297"/>
+          <line class="bld-dim" x1="125" y1="222" x2="135" y2="222"/>
+          <line class="bld-dim" x1="125" y1="297" x2="135" y2="297"/>
+          <!-- Interior space labels -->
+          <rect class="bld-highlight" x="140" y="230" width="95" height="65"/>
+          <rect class="bld-highlight" x="325" y="230" width="95" height="65"/>
+        </g>
+
+        <!-- ── ANNOTATIONS ── -->
+        <g id="annots-group">
+          <!-- height dim line -->
+          <g class="annot" id="annot-h">
+            <line class="bld-dim" x1="530" y1="140" x2="530" y2="580"/>
+            <line class="bld-dim" x1="525" y1="140" x2="535" y2="140"/>
+            <line class="bld-dim" x1="525" y1="580" x2="535" y2="580"/>
+            <text x="545" y="365" font-family="DM Mono,monospace" font-size="8"
+              fill="rgba(196,163,90,0.6)" letter-spacing="1">36m</text>
+          </g>
+          <!-- width dim line -->
+          <g class="annot" id="annot-w">
+            <line class="bld-dim" x1="120" y1="600" x2="440" y2="600"/>
+            <line class="bld-dim" x1="120" y1="595" x2="120" y2="605"/>
+            <line class="bld-dim" x1="440" y1="595" x2="440" y2="605"/>
+            <text x="252" y="615" font-family="DM Mono,monospace" font-size="8"
+              fill="rgba(196,163,90,0.6)" letter-spacing="1">24m</text>
+          </g>
+          <!-- north arrow -->
+          <g class="annot" id="annot-n" transform="translate(30,150)">
+            <circle cx="0" cy="0" r="16" stroke="rgba(196,163,90,0.3)" stroke-width=".8" fill="none"/>
+            <polygon points="0,-12 4,4 0,0 -4,4" fill="rgba(196,163,90,0.7)"/>
+            <text x="-3" y="24" font-family="DM Mono,monospace" font-size="7"
+              fill="rgba(196,163,90,0.5)" letter-spacing="1">N</text>
+          </g>
+        </g>
+
+        <!-- ── LIGHT SHAFTS ── -->
+        <g id="light-group" opacity="0">
+          <line class="bld-light" x1="175" y1="153" x2="140" y2="460"/>
+          <line class="bld-light" x1="220" y1="153" x2="212" y2="460"/>
+          <line class="bld-light" x1="340" y1="153" x2="348" y2="460"/>
+          <line class="bld-light" x1="385" y1="153" x2="420" y2="460"/>
+        </g>
+
+        <!-- ── GLOW DOTS (key points) ── -->
+        <circle class="glow-dot" id="dot-apex" cx="280" cy="128" r="4" filter="url(#glow)"/>
+        <circle class="glow-dot" id="dot-entry" cx="280" cy="580" r="4" filter="url(#glow)"/>
+        <circle class="glow-dot" id="dot-wing-l" cx="60" cy="220" r="3" filter="url(#glow)"/>
+        <circle class="glow-dot" id="dot-wing-r" cx="500" cy="220" r="3" filter="url(#glow)"/>
+      </svg>
+    </div><!-- /building-stage -->
+
+    <!-- Chapter copy overlay -->
+    <div id="chapter-copy">
+      <div class="copy-label" id="copyLabel">Chapter I</div>
+      <h2 class="copy-title" id="copyTitle">The <em>Ground</em><br>is Sacred.</h2>
+      <p class="copy-body" id="copyBody">Every great building begins not with steel or glass — but with the act of reading the earth. Before a line is drawn, the site speaks.</p>
     </div>
-    <div class="hero-scroll-cue"><div class="scroll-bar"></div><span>Scroll to discover</span></div>
-  </div>
-  <div class="hero-right">
-    <svg class="geo-svg" viewBox="0 0 500 600" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="250" cy="300" r="220" stroke="rgba(200,169,110,0.12)" stroke-width="1"/>
-      <circle cx="250" cy="300" r="160" stroke="rgba(200,169,110,0.18)" stroke-width="1"/>
-      <polygon points="250,80 450,340 50,340" stroke="rgba(200,169,110,0.25)" stroke-width="1" fill="none"/>
-      <polygon points="250,520 450,260 50,260" stroke="rgba(200,169,110,0.1)" stroke-width="1" fill="none"/>
-      <rect x="185" y="235" width="130" height="130" stroke="rgba(200,169,110,0.35)" stroke-width="1.5" fill="none" transform="rotate(15 250 300)"/>
-      <rect x="200" y="250" width="100" height="100" stroke="rgba(200,169,110,0.5)" stroke-width="1" fill="rgba(200,169,110,0.03)" transform="rotate(15 250 300)"/>
-      <line x1="250" y1="60" x2="250" y2="540" stroke="rgba(200,169,110,0.08)" stroke-width="1"/>
-      <line x1="30" y1="300" x2="470" y2="300" stroke="rgba(200,169,110,0.08)" stroke-width="1"/>
-      <circle cx="250" cy="300" r="6" fill="rgba(200,169,110,0.7)"/>
-      <circle cx="250" cy="80" r="3" fill="rgba(200,169,110,0.5)"/>
-      <circle cx="450" cy="340" r="3" fill="rgba(200,169,110,0.5)"/>
-      <circle cx="50" cy="340" r="3" fill="rgba(200,169,110,0.5)"/>
-      <circle r="5" fill="#C8A96E" opacity="0.9">
-        <animateMotion dur="12s" repeatCount="indefinite"><mpath href="#orbit-path"/></animateMotion>
-      </circle>
-      <path id="orbit-path" d="M 250 80 A 220 220 0 1 1 249.99 80" fill="none"/>
-      <line x1="30" y1="80" x2="30" y2="520" stroke="rgba(200,169,110,0.15)" stroke-width="1" stroke-dasharray="4 6"/>
-      <line x1="30" y1="80" x2="40" y2="80" stroke="rgba(200,169,110,0.3)" stroke-width="1"/>
-      <line x1="30" y1="520" x2="40" y2="520" stroke="rgba(200,169,110,0.3)" stroke-width="1"/>
-      <g stroke="rgba(200,169,110,0.35)" stroke-width="1">
-        <line x1="470" y1="60" x2="470" y2="90"/><line x1="440" y1="60" x2="470" y2="60"/>
-        <line x1="470" y1="540" x2="470" y2="510"/><line x1="440" y1="540" x2="470" y2="540"/>
-        <line x1="30" y1="60" x2="30" y2="90"/><line x1="30" y1="60" x2="60" y2="60"/>
-      </g>
-      <text x="214" y="372" font-family="Georgia,serif" font-size="52" font-weight="900" fill="rgba(200,169,110,0.07)" letter-spacing="-2">RAA</text>
-      <text x="220" y="296" font-family="sans-serif" font-size="8" fill="rgba(200,169,110,0.5)" letter-spacing="2">ORIGIN POINT</text>
-    </svg>
-  </div>
-</section>
 
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-track">
-    <span class="ticker-item">NATA 2025</span><span class="ticker-item">IIT JEE B.Arch</span><span class="ticker-item">NIFT Entrance</span><span class="ticker-item">NID Design Aptitude</span><span class="ticker-item">BDes Programs</span><span class="ticker-item">Portfolio Mentorship</span><span class="ticker-item">Drawing Studio</span><span class="ticker-item">Crash Courses</span>
-    <span class="ticker-item">NATA 2025</span><span class="ticker-item">IIT JEE B.Arch</span><span class="ticker-item">NIFT Entrance</span><span class="ticker-item">NID Design Aptitude</span><span class="ticker-item">BDes Programs</span><span class="ticker-item">Portfolio Mentorship</span><span class="ticker-item">Drawing Studio</span><span class="ticker-item">Crash Courses</span>
-  </div>
-</div>
+    <!-- Scroll hint -->
+    <div id="scroll-hint">
+      <div class="sh-line"></div>
+      <span>Scroll</span>
+    </div>
 
-<!-- COUNTERS -->
-<div class="counters">
-  <div class="ctr rv"><div class="ctr-num"><span class="count" data-t="1200">0</span><sup>+</sup></div><div class="ctr-label">Students<br>Trained</div><div class="ctr-bar"></div></div>
-  <div class="ctr rv d1"><div class="ctr-num"><span class="count" data-t="94">0</span><sup>%</sup></div><div class="ctr-label">Selection<br>Rate</div><div class="ctr-bar"></div></div>
-  <div class="ctr rv d2"><div class="ctr-num"><span class="count" data-t="8">0</span><sup>+</sup></div><div class="ctr-label">Years of<br>Excellence</div><div class="ctr-bar"></div></div>
-  <div class="ctr rv d3"><div class="ctr-num"><span class="count" data-t="45">0</span></div><div class="ctr-label">Top Colleges<br>Cracked</div><div class="ctr-bar"></div></div>
-</div>
+  </div><!-- /sticky-view -->
+</div><!-- /scroll-driver -->
 
-<!-- COURSES -->
-<section id="courses">
-  <div class="courses-top">
-    <div><p class="s-eyebrow rv">Our Programs</p><h2 class="s-title rv d1">Courses <em>Designed</em><br>to Get You In.</h2></div>
-    <p class="courses-top-right rv d2">Every program built by architects and designers who cleared these very exams. Not textbook theory — lived, practiced, refined knowledge.</p>
-  </div>
-  <div class="clist-grid rv">
-    <ul class="clist">
-      <li class="clist-item"><div class="clist-num">01</div><div class="clist-main"><div class="clist-sub">Architecture Entrance</div><div class="clist-name">NATA</div><div class="clist-pills"><span class="cpill">Drawing Studio</span><span class="cpill">Aesthetic Sensitivity</span><span class="cpill">PCM</span><span class="cpill">Mock Tests</span></div></div><div class="clist-arrow">↗</div></li>
-      <li class="clist-item"><div class="clist-num">02</div><div class="clist-main"><div class="clist-sub">IIT Entrance · Paper 2</div><div class="clist-name">JEE B.Arch</div><div class="clist-pills"><span class="cpill">Mathematics</span><span class="cpill">Aptitude</span><span class="cpill">Freehand Drawing</span><span class="cpill">3D Viz</span></div></div><div class="clist-arrow">↗</div></li>
-      <li class="clist-item"><div class="clist-num">03</div><div class="clist-main"><div class="clist-sub">Bachelor of Design</div><div class="clist-name">BDes</div><div class="clist-pills"><span class="cpill">Portfolio</span><span class="cpill">Creative Thinking</span><span class="cpill">Visual Comm</span></div></div><div class="clist-arrow">↗</div></li>
-    </ul>
-    <ul class="clist">
-      <li class="clist-item"><div class="clist-num">04</div><div class="clist-main"><div class="clist-sub">Fashion & Design</div><div class="clist-name">NIFT</div><div class="clist-pills"><span class="cpill">GAT Prep</span><span class="cpill">Situation Test</span><span class="cpill">Creative Ability</span></div></div><div class="clist-arrow">↗</div></li>
-      <li class="clist-item"><div class="clist-num">05</div><div class="clist-main"><div class="clist-sub">Industrial Design</div><div class="clist-name">NID DAT</div><div class="clist-pills"><span class="cpill">Design Aptitude</span><span class="cpill">Material Studies</span><span class="cpill">Mains Portfolio</span></div></div><div class="clist-arrow">↗</div></li>
-      <li class="clist-item"><div class="clist-num">06</div><div class="clist-main"><div class="clist-sub">60-Day Intensive</div><div class="clist-name">Crash Course</div><div class="clist-pills"><span class="cpill">Daily Drawing</span><span class="cpill">Timed Mocks</span><span class="cpill">1-on-1 Critique</span></div></div><div class="clist-arrow">↗</div></li>
-    </ul>
-  </div>
-</section>
 
-<!-- WHY -->
-<section id="why">
-  <div class="why-visual">
-    <div class="why-geo-bg"></div>
-    <div class="why-accent-card rv">
-      <div class="why-big-num">8+</div>
-      <div class="why-big-label">Years Shaping Architects</div>
-      <p style="font-size:.82rem;color:var(--dim);line-height:1.75;font-weight:300">Ray Arch Academy is founded by practicing architects who've walked through the same entrance halls your child is about to enter.</p>
-      <div class="why-mini-stats">
-        <div><div class="wms-n">1200+</div><div class="wms-l">Students</div></div>
-        <div><div class="wms-n">94%</div><div class="wms-l">Selection</div></div>
-        <div><div class="wms-n">45</div><div class="wms-l">Colleges</div></div>
-        <div><div class="wms-n">6</div><div class="wms-l">Courses</div></div>
+<!-- ══════════ MAIN CONTENT (after scroll narrative) ══════════ -->
+<div id="main-content">
+
+  <!-- Programs -->
+  <div class="courses-strip">
+    <div class="courses-strip-head">
+      <div>
+        <p class="s-eyebrow rv">Our Programs</p>
+        <h2 class="s-title rv d1">Courses that build<br><em>architects.</em></h2>
       </div>
+      <p class="rv d2" style="max-width:280px;font-size:.75rem;line-height:1.9;color:var(--dim);padding-left:2rem;border-left:1px solid var(--line)">
+        NATA · JEE B.Arch · BDes · NIFT · NID — guided by practicing architects who've cleared these very exams.
+      </p>
+    </div>
+
+    <div class="c2grid rv d1">
+      <ul class="clist">
+        <li class="clist-item">
+          <div class="cn">01</div>
+          <div><div class="csub">Architecture Entrance</div><div class="cname">NATA</div><div class="cpills"><span class="cpill">Drawing</span><span class="cpill">Sensitivity</span><span class="cpill">PCM</span></div></div>
+          <div class="clist-arrow">↗</div>
+        </li>
+        <li class="clist-item">
+          <div class="cn">02</div>
+          <div><div class="csub">IIT Entrance · Paper 2</div><div class="cname">JEE B.Arch</div><div class="cpills"><span class="cpill">Maths</span><span class="cpill">Aptitude</span><span class="cpill">3D Viz</span></div></div>
+          <div class="clist-arrow">↗</div>
+        </li>
+        <li class="clist-item">
+          <div class="cn">03</div>
+          <div><div class="csub">Bachelor of Design</div><div class="cname">BDes</div><div class="cpills"><span class="cpill">Portfolio</span><span class="cpill">Creative Thinking</span></div></div>
+          <div class="clist-arrow">↗</div>
+        </li>
+      </ul>
+      <ul class="clist">
+        <li class="clist-item">
+          <div class="cn">04</div>
+          <div><div class="csub">Fashion & Design</div><div class="cname">NIFT</div><div class="cpills"><span class="cpill">GAT</span><span class="cpill">Situation Test</span></div></div>
+          <div class="clist-arrow">↗</div>
+        </li>
+        <li class="clist-item">
+          <div class="cn">05</div>
+          <div><div class="csub">Industrial Design</div><div class="cname">NID DAT</div><div class="cpills"><span class="cpill">Aptitude</span><span class="cpill">Mains Portfolio</span></div></div>
+          <div class="clist-arrow">↗</div>
+        </li>
+        <li class="clist-item">
+          <div class="cn">06</div>
+          <div><div class="csub">60-Day Intensive</div><div class="cname">Crash Course</div><div class="cpills"><span class="cpill">Daily Drawing</span><span class="cpill">1-on-1</span></div></div>
+          <div class="clist-arrow">↗</div>
+        </li>
+      </ul>
     </div>
   </div>
-  <div class="why-right">
-    <p class="s-eyebrow rv">Why Ray Arch Academy</p>
-    <h2 class="s-title rv d1">Taught by<br><em>Architects,</em><br>not just teachers.</h2>
-    <ul class="features">
-      <li class="feat rv d2"><div class="feat-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div><div class="feat-body"><h4>Practicing Architect Faculty</h4><p>All mentors are licensed architects actively working in design — bringing real sensibility to exam preparation.</p></div></li>
-      <li class="feat rv d3"><div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><div class="feat-body"><h4>Live Pattern-Aligned Curriculum</h4><p>Updated every session to match the latest CoA, JEE, NIFT and NID patterns. No stale material — ever.</p></div></li>
-      <li class="feat rv d4"><div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="feat-body"><h4>Weekly Drawing Critique Studio</h4><p>Studio-format reviews every week — design skill is sharpened through relentless, expert-guided practice.</p></div></li>
-      <li class="feat rv d5"><div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="feat-body"><h4>Small Batches · Personal Attention</h4><p>Strictly limited seats per batch — every student gets individual feedback, mentoring and a tailored path.</p></div></li>
+
+  <!-- CTA Band -->
+  <div class="cta-band rv">
+    <h2>Begin your<br><em>architectural</em> journey.</h2>
+    <a href="mailto:hello@rayarchacademy.in" class="cta-btn">Apply for 2025 Batch →</a>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <span class="f-logo">Ray <em>Arch</em> Academy</span>
+    <ul class="f-links">
+      <li><a href="#">NATA</a></li>
+      <li><a href="#">JEE B.Arch</a></li>
+      <li><a href="#">NIFT</a></li>
+      <li><a href="#">NID</a></li>
+      <li><a href="#">Contact</a></li>
     </ul>
-  </div>
-</section>
+    <p class="f-copy">© 2025 Ray Arch Academy · Ray Design & Build</p>
+  </footer>
 
-<!-- RESULTS -->
-<section id="results">
-  <div class="results-head"><p class="s-eyebrow rv">Hall of Excellence</p><h2 class="s-title rv d1">Our <em>Toppers</em> speak<br>through their ranks.</h2></div>
-  <div class="toppers-strip rv d2">
-    <div class="topper"><div class="topper-year">NATA · 2024</div><div class="topper-init">A</div><div class="topper-name">Aarav Mehta</div><div class="topper-score">172 / 200</div><div class="topper-college">SPA New Delhi · B.Arch</div><div class="topper-line"></div></div>
-    <div class="topper"><div class="topper-year">NIFT · 2024</div><div class="topper-init">P</div><div class="topper-name">Priya Nair</div><div class="topper-score">NIFT Mumbai</div><div class="topper-college">Fashion Design · 2024</div><div class="topper-line"></div></div>
-    <div class="topper"><div class="topper-year">JEE B.Arch · 2024</div><div class="topper-init">R</div><div class="topper-name">Rahul Sharma</div><div class="topper-score">98.4 Percentile</div><div class="topper-college">NIT Trichy · B.Arch</div><div class="topper-line"></div></div>
-    <div class="topper"><div class="topper-year">NID DAT · 2024</div><div class="topper-init">S</div><div class="topper-name">Sneha Iyer</div><div class="topper-score">NID Ahmedabad</div><div class="topper-college">Product Design · 2024</div><div class="topper-line"></div></div>
-    <div class="topper"><div class="topper-year">NATA · 2023</div><div class="topper-init">K</div><div class="topper-name">Karan Patel</div><div class="topper-score">168 / 200</div><div class="topper-college">CEPT University · B.Arch</div><div class="topper-line"></div></div>
-    <div class="topper"><div class="topper-year">NIFT · 2023</div><div class="topper-init">M</div><div class="topper-name">Meera Reddy</div><div class="topper-score">NIFT Hyderabad</div><div class="topper-college">Interior Design · 2023</div><div class="topper-line"></div></div>
-    <div class="topper"><div class="topper-year">JEE B.Arch · 2023</div><div class="topper-init">V</div><div class="topper-name">Vivaan Gupta</div><div class="topper-score">97.1 Percentile</div><div class="topper-college">NIT Calicut · B.Arch</div><div class="topper-line"></div></div>
-    <div class="topper"><div class="topper-year">NID · 2023</div><div class="topper-init">T</div><div class="topper-name">Tanvi Shah</div><div class="topper-score">NID Gandhinagar</div><div class="topper-college">Graphic Design · 2023</div><div class="topper-line"></div></div>
-  </div>
-</section>
+</div><!-- /main-content -->
 
-<!-- GALLERY -->
-<section id="gallery">
-  <div class="gallery-head"><p class="s-eyebrow rv">Studio Life</p><h2 class="s-title rv d1">Where ideas become <em>architecture.</em></h2></div>
-  <div class="gallery-grid rv d2">
-    <div class="gal gp-a"><div class="gal-fill gp-a"></div><div class="gal-label"><h4>Drawing Studio</h4><p>Freehand & Perspective</p></div></div>
-    <div class="gal gp-b"><div class="gal-fill gp-b"></div><div class="gal-label"><h4>Design Workshop</h4><p>Creative Thinking Lab</p></div></div>
-    <div class="gal gp-c"><div class="gal-fill gp-c"></div><div class="gal-label"><h4>Spatial Studies</h4><p>Architectural Geometry</p></div></div>
-    <div class="gal gp-d"><div class="gal-fill gp-d"></div><div class="gal-label"><h4>Portfolio Reviews</h4><p>1-on-1 Critique</p></div></div>
-    <div class="gal gp-e"><div class="gal-fill gp-e"></div><div class="gal-label"><h4>Mock Examinations</h4><p>Timed NATA Simulations</p></div></div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section id="testimonials">
-  <p class="s-eyebrow rv">Student Stories</p>
-  <h2 class="s-title rv d1">Voices of our <em>Alumni.</em></h2>
-  <div class="testi-grid">
-    <div class="tcard rv"><div class="tcard-exam">NATA · SPA Delhi 2024</div><p class="tcard-text">"Ray Arch Academy didn't just prepare me for NATA — they taught me to see the world like an architect. My drawing improved more in 3 months here than in 3 years of school."</p><div class="tcard-author"><div class="tcard-av">A</div><div><div class="tcard-n">Aarav Mehta</div><div class="tcard-d">172/200 · SPA Delhi</div></div></div></div>
-    <div class="tcard rv d1"><div class="tcard-exam">NID DAT · Ahmedabad 2024</div><p class="tcard-text">"The faculty here are real architects. They don't teach you to pass — they teach you to think. That made all the difference in my NID Mains portfolio."</p><div class="tcard-author"><div class="tcard-av">S</div><div><div class="tcard-n">Sneha Iyer</div><div class="tcard-d">NID Ahmedabad · Product Design</div></div></div></div>
-    <div class="tcard rv d2"><div class="tcard-exam">JEE B.Arch · NIT Trichy 2024</div><p class="tcard-text">"Small batches meant I got feedback every single class. I cracked JEE Paper 2 at 98.4 percentile — it all started here with a pencil and a mentor who genuinely cared."</p><div class="tcard-author"><div class="tcard-av">R</div><div><div class="tcard-n">Rahul Sharma</div><div class="tcard-d">98.4 Percentile · NIT Trichy</div></div></div></div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact">
-  <div class="contact-left">
-    <div class="contact-left-bg"></div>
-    <p class="s-eyebrow rv">Get In Touch</p>
-    <h2 class="s-title rv d1">Begin your<br><em>journey</em> today.</h2>
-    <div class="contact-details">
-      <div class="cdet rv d2"><div class="cdet-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="cdet-label">Location</div><div class="cdet-val">Ray Design & Build Studio<br>Your City, India</div></div></div>
-      <div class="cdet rv d3"><div class="cdet-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.8a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div><div class="cdet-label">Phone</div><div class="cdet-val">+91 98765 43210</div></div></div>
-      <div class="cdet rv d4"><div class="cdet-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="cdet-label">Email</div><div class="cdet-val">hello@rayarchacademy.in</div></div></div>
-    </div>
-    <div class="batches rv d5"><h4>Upcoming Batches</h4><div class="batch-pills"><span class="bpill">June 2025</span><span class="bpill">July 2025</span><span class="bpill">Aug Crash</span><span class="bpill">Online Batch</span></div></div>
-  </div>
-  <div class="contact-right">
-    <h3 class="form-title rv">Enquire <em>now.</em></h3>
-    <div class="form-row rv d1"><div class="fg"><label>First Name</label><input type="text" placeholder="Aarav"></div><div class="fg"><label>Last Name</label><input type="text" placeholder="Mehta"></div></div>
-    <div class="fg rv d1"><label>Email</label><input type="email" placeholder="aarav@email.com"></div>
-    <div class="fg rv d2"><label>Phone</label><input type="tel" placeholder="+91 98765 43210"></div>
-    <div class="fg rv d2"><label>Course</label><select><option value="" disabled selected>Select a Program</option><option>NATA — Architecture Entrance</option><option>IIT JEE B.Arch — Paper 2</option><option>BDes — Design Entrance</option><option>NIFT — GAT & Situation Test</option><option>NID DAT — Design Aptitude</option><option>60-Day Crash Course</option></select></div>
-    <div class="fg rv d3"><label>Currently In</label><select><option value="" disabled selected>Your class / year</option><option>Class 11</option><option>Class 12</option><option>Dropper / Gap Year</option><option>Other</option></select></div>
-    <div class="fg rv d3"><label>Message</label><textarea placeholder="Tell us your goals..."></textarea></div>
-    <button class="form-btn rv d4" onclick="submitForm(this)">Send Enquiry ↗</button>
-    <p class="form-note rv d4">We respond within 24 hours. No spam, ever.</p>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-top">
-    <div><a href="#" class="f-brand-logo">Ray <span>Arch</span> Academy</a><p class="f-brand-desc">Shaping India's next generation of architects and designers — one drawing, one critique, one exam at a time.</p></div>
-    <div class="f-col"><h5>Programs</h5><ul><li><a href="#courses">NATA Prep</a></li><li><a href="#courses">IIT JEE B.Arch</a></li><li><a href="#courses">BDes Entrance</a></li><li><a href="#courses">NIFT Coaching</a></li><li><a href="#courses">NID DAT</a></li><li><a href="#courses">Crash Course</a></li></ul></div>
-    <div class="f-col"><h5>Academy</h5><ul><li><a href="#why">About Us</a></li><li><a href="#results">Results 2024</a></li><li><a href="#gallery">Studio</a></li><li><a href="#testimonials">Alumni</a></li></ul></div>
-    <div class="f-col"><h5>Connect</h5><ul><li><a href="#">@TheArchDuo</a></li><li><a href="#">WhatsApp</a></li><li><a href="#contact">Enquire Now</a></li></ul></div>
-  </div>
-  <div class="footer-bottom"><p>© 2025 Ray Arch Academy · A Ray Design & Build Initiative</p><p class="f-tagline">"Design is not just what it looks like — it's how it works."</p></div>
-</footer>
-
+<!-- ══════════ SCROLL NARRATIVE ENGINE ══════════ -->
 <script>
-// Cursor
-const dot=document.getElementById('cur-dot'),ring=document.getElementById('cur-ring');
+/* ─── Cursor ─── */
+const cur=document.getElementById('cur'),curR=document.getElementById('cur-r');
 let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';});
-(function loop(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop);})();
 
-// Nav scroll
-const nav=document.getElementById('mainNav');
-window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>60));
+/* ─── Chapter Definitions ─── */
+const CHAPTERS = [
+  {
+    num:'I', label:'Chapter I — Site Reading',
+    title:'The <em>Ground</em><br>is Sacred.',
+    body:'Every great building begins not with steel or glass — but with the act of reading the earth. Before a line is drawn, the site speaks.',
+    navText:'Chapter I — Foundation'
+  },
+  {
+    num:'II', label:'Chapter II — Footprint',
+    title:'The <em>Plan</em><br>Takes Shape.',
+    body:'The ground plane is laid. Axes are established. A building stakes its claim on the earth — defining inside from outside, public from private.',
+    navText:'Chapter II — Footprint'
+  },
+  {
+    num:'III', label:'Chapter III — Rise',
+    title:'Structure<br><em>Ascends.</em>',
+    body:'Floor by floor, the skeleton rises. Structural logic made visible — each level a layer of human inhabitation, stacked into the sky.',
+    navText:'Chapter III — Rise'
+  },
+  {
+    num:'IV', label:'Chapter IV — Skin',
+    title:'Light Finds<br>its <em>Way In.</em>',
+    body:'The facade is not decoration — it is the interface between inside and outside. Glass admits light, frames views, breathes with the city.',
+    navText:'Chapter IV — Facade'
+  },
+  {
+    num:'V', label:'Chapter V — Section',
+    title:'The <em>Cut</em><br>Reveals All.',
+    body:'A section cut slices through the building like a scalpel. What was hidden is now legible — the interior life of the architecture exposed.',
+    navText:'Chapter V — Section'
+  },
+  {
+    num:'VI', label:'Chapter VI — Light',
+    title:'Space is<br><em>Shaped</em> by Light.',
+    body:'Light is the architect\'s most powerful material. It slides through glass, traces across surfaces, and transforms space from container to experience.',
+    navText:'Chapter VI — Light'
+  },
+  {
+    num:'VII', label:'Chapter VII — Completion',
+    title:'The Building<br><em>Lives.</em>',
+    body:'Architecture is complete only when inhabited. The building is now a place — a vessel for human life, memory, and aspiration.',
+    navText:'Chapter VII — Complete'
+  }
+];
 
-// Mobile menu
-let mo=false;
-function toggleMenu(){
-  mo=!mo;
-  const nl=document.getElementById('navLinks');
-  nl.style.cssText=mo?'display:flex;flex-direction:column;position:fixed;top:65px;left:0;right:0;background:rgba(8,8,8,.97);padding:2rem 1.5rem;gap:1.5rem;z-index:999;border-top:1px solid rgba(200,169,110,.2)':'';
+/* ─── State ─── */
+const svg        = document.getElementById('building-svg');
+const gridGroup  = document.getElementById('grid-group');
+const groundGroup= document.getElementById('ground-group');
+const shellGroup = document.getElementById('shell-group');
+const floorsGroup= document.getElementById('floors-group');
+const glassGroup = document.getElementById('glass-group');
+const sectionGroup=document.getElementById('section-group');
+const lightGroup = document.getElementById('light-group');
+const cutRect    = document.getElementById('cut-rect');
+const lightRay   = document.getElementById('light-ray');
+const atmo       = document.getElementById('atmo');
+const chNum      = document.getElementById('chapter-num');
+const copyEl     = document.getElementById('chapter-copy');
+const copyLabel  = document.getElementById('copyLabel');
+const copyTitle  = document.getElementById('copyTitle');
+const copyBody   = document.getElementById('copyBody');
+const navChapter = document.getElementById('navChapter');
+const progressBar= document.getElementById('progress-bar');
+const dots       = document.querySelectorAll('.cdot');
+const scrollHint = document.getElementById('scroll-hint');
+
+const groundShadow=document.getElementById('ground-shadow');
+const dotApex  =document.getElementById('dot-apex');
+const dotEntry =document.getElementById('dot-entry');
+const dotWingL =document.getElementById('dot-wing-l');
+const dotWingR =document.getElementById('dot-wing-r');
+const annotH   =document.getElementById('annot-h');
+const annotW   =document.getElementById('annot-w');
+const annotN   =document.getElementById('annot-n');
+
+let currentChapter = -1;
+
+/* ─── Chapter Applier ─── */
+function applyChapter(ch, progress) {
+
+  /* Update dots */
+  dots.forEach((d,i)=>d.classList.toggle('active', i===ch));
+
+  /* Progress bar */
+  const totalProgress = (ch + progress) / CHAPTERS.length;
+  progressBar.style.width = (totalProgress * 100) + '%';
+
+  /* Nav chapter */
+  navChapter.textContent = CHAPTERS[ch].navText;
+
+  /* Chapter number ghost */
+  chNum.textContent = CHAPTERS[ch].num;
+
+  /* Hide scroll hint after chapter 0 */
+  scrollHint.style.opacity = ch===0 ? '1':'0';
+
+  /* Update copy if chapter changed */
+  if(ch !== currentChapter){
+    currentChapter = ch;
+    copyEl.classList.remove('active');
+    setTimeout(()=>{
+      copyLabel.textContent = CHAPTERS[ch].label;
+      copyTitle.innerHTML   = CHAPTERS[ch].title;
+      copyBody.textContent  = CHAPTERS[ch].body;
+      copyEl.classList.add('active');
+    }, 200);
+  }
+
+  /* ── Per-chapter visual state ── */
+
+  /* Chapter 0: bare site — grid fades in */
+  gridGroup.style.opacity   = ch >= 0 ? Math.min(progress * 3, 0.8) : '0';
+
+  /* Chapter 1: ground plane */
+  groundGroup.style.opacity = ch >= 1 ? '1':'0';
+  groundShadow.style.fill   = ch >= 1 ? 'rgba(0,0,0,0.2)':'rgba(0,0,0,0)';
+  if(ch===1 && progress > .3){
+    document.querySelectorAll('.bld-ground').forEach(e=>e.classList.add('drawn'));
+  }
+
+  /* Chapter 2: shell rises — SVG scale Y grows */
+  if(ch >= 2){
+    shellGroup.style.opacity = '1';
+    const scaleY = ch===2 ? 0.3 + progress*0.7 : 1;
+    const scaleX = ch===2 ? 0.85 + progress*0.15 : 1;
+    svg.style.transform = ch===2
+      ? `scaleX(${scaleX}) scaleY(${scaleY}) translateY(${(1-scaleY)*25}%)`
+      : '';
+    document.querySelectorAll('.bld-shell').forEach(e=>e.classList.add('drawn'));
+    floorsGroup.style.opacity = ch >= 2 ? String(Math.min(progress*2,1)):'0';
+  } else {
+    shellGroup.style.opacity  = '0';
+    floorsGroup.style.opacity = '0';
+    svg.style.transform = '';
+  }
+
+  /* Chapter 3: facade / glass + perspective tilt */
+  if(ch >= 3){
+    glassGroup.style.opacity = ch===3 ? String(progress) : '1';
+    /* Subtle perspective */
+    const tilt = ch===3 ? progress*8 : 0;
+    svg.style.transform = `perspective(900px) rotateY(${tilt}deg)`;
+  } else {
+    glassGroup.style.opacity = '0';
+    if(ch < 2) svg.style.transform = '';
+  }
+
+  /* Chapter 4: section cut — reveal clip rect from bottom */
+  if(ch >= 4){
+    sectionGroup.style.opacity = '1';
+    const cutH  = ch===4 ? Math.max(0, progress) : 1;
+    const rectY = 620 - cutH * 480;
+    const rectH = cutH * 480;
+    cutRect.setAttribute('y', rectY);
+    cutRect.setAttribute('height', rectH);
+    /* Rotate slightly to show section angle */
+    const rot = ch===4 ? -progress*4 : -4;
+    svg.style.transform = `perspective(900px) rotateY(${rot}deg)`;
+    /* Annotations */
+    annotH.classList.toggle('on', progress > .4);
+    annotW.classList.toggle('on', progress > .6);
+  } else {
+    sectionGroup.style.opacity = '0';
+    annotH.classList.remove('on');
+    annotW.classList.remove('on');
+  }
+
+  /* Chapter 5: light shafts + zoom in */
+  if(ch >= 5){
+    lightGroup.style.opacity = ch===5 ? String(progress) : '1';
+    lightRay.style.height = ch===5 ? (progress*80)+'%' : '80%';
+    lightRay.style.opacity = ch===5 ? String(progress*.6) : '0.6';
+    /* Zoom in */
+    const zoom = ch===5 ? 1 + progress*0.35 : 1.35;
+    const curRot = ch===4 ? -4 : (ch===5 ? -4 + progress*4 : 0);
+    svg.style.transform = `perspective(900px) rotateY(${curRot}deg) scale(${zoom})`;
+    /* Atmo brightens */
+    atmo.style.background = `radial-gradient(ellipse 80% 70% at 50% 40%,
+      rgba(196,163,90,${0.06 + progress*0.1}) 0%,transparent 70%)`;
+  } else {
+    lightGroup.style.opacity = '0';
+    lightRay.style.height = '0%';
+    lightRay.style.opacity = '0';
+    if(ch < 4) atmo.style.background='';
+  }
+
+  /* Chapter 6: full reveal, glow dots, rotate 360 */
+  if(ch >= 6){
+    const spin  = progress * 8;  /* subtle rotation */
+    const scale = 1.35 - progress*0.35; /* zoom back out to full */
+    svg.style.transform = `perspective(900px) rotateY(${spin}deg) scale(${scale})`;
+    /* Glow dots */
+    dotApex.classList.toggle('on',  progress > .2);
+    dotEntry.classList.toggle('on', progress > .3);
+    dotWingL.classList.toggle('on', progress > .4);
+    dotWingR.classList.toggle('on', progress > .4);
+    annotN.classList.toggle('on',   progress > .5);
+    /* All layers max */
+    lightGroup.style.opacity  = '1';
+    glassGroup.style.opacity  = '1';
+    sectionGroup.style.opacity= '1';
+    atmo.style.background = `radial-gradient(ellipse 90% 80% at 50% 40%,
+      rgba(196,163,90,0.14) 0%,transparent 70%)`;
+  } else {
+    if(ch < 5){
+      dotApex.classList.remove('on');
+      dotEntry.classList.remove('on');
+      dotWingL.classList.remove('on');
+      dotWingR.classList.remove('on');
+      annotN.classList.remove('on');
+    }
+  }
 }
 
-// Scroll reveal
-const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('on')}),{threshold:.1});
-document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+/* ─── Scroll Handler ─── */
+function onScroll(){
+  const driver  = document.getElementById('scroll-driver');
+  const rect    = driver.getBoundingClientRect();
+  const total   = driver.offsetHeight - window.innerHeight;
+  const scrolled= Math.max(0, -rect.top);
+  const t       = Math.min(scrolled / total, 1);  /* 0–1 */
 
-// Counters
-function animCount(el,t){let c=0;const s=t/(1800/16),tm=setInterval(()=>{c+=s;if(c>=t){c=t;clearInterval(tm);}el.textContent=Math.floor(c);},16);}
-const co=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting&&!x.target.classList.contains('done')){x.target.classList.add('done','counted');animCount(x.target.querySelector('.count'),+x.target.querySelector('.count').dataset.t);}}),{threshold:.5});
-document.querySelectorAll('.ctr').forEach(el=>co.observe(el));
+  const N       = CHAPTERS.length;
+  const raw     = t * N;
+  const ch      = Math.min(Math.floor(raw), N-1);
+  const progress= raw - ch;  /* 0–1 within chapter */
 
-// Form
-function submitForm(b){b.textContent='✓ Received — We\'ll be in touch within 24 hrs';b.style.cssText='background:#2a5c3f;color:#7ecfa0;letter-spacing:.06em;width:100%;margin-top:.5rem;padding:1rem;font-family:Syne,sans-serif;font-weight:800;font-size:.75rem;text-transform:uppercase;border:none;cursor:none';setTimeout(()=>{b.textContent='Send Enquiry ↗';b.style.cssText='';},5000);}
+  applyChapter(ch, progress);
+}
 
-// Cursor scale on interactive elements
-document.querySelectorAll('.clist-item,.feat,.topper,.tcard').forEach(el=>{
-  el.addEventListener('mouseenter',()=>dot.style.transform='translate(-50%,-50%) scale(3)');
-  el.addEventListener('mouseleave',()=>dot.style.transform='translate(-50%,-50%) scale(1)');
-});
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll(); /* init */
+
+/* ─── Post-scroll reveal ─── */
+const rvObs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')});
+},{threshold:.1});
+document.querySelectorAll('.rv').forEach(el=>rvObs.observe(el));
 </script>
 </body>
 </html>
